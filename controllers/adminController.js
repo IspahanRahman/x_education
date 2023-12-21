@@ -57,10 +57,60 @@ const addCourse = (req,res)=>{
     }
 }
 
+const editCourse = (req,res) =>{
+    try{
+        const {course_id} = req.query;
+        const {name,description,price,duration,level,topics,schedule} = req.body;
+        const q = "UPDATE course SET name=?,description=?,price=?,duration=?,level=?,topics=?,schedule=? WHERE course_id =?";
+        conn.query(q,[name,description,price,duration,level,topics,schedule,course_id],(err, result) =>{
+            if(err) {
+                throw err;
+            }
+            return res.status(200).json({
+                message: "The course has been edited"
+            });
+        })
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+const courseById = (req,res) =>{
+    try{
+        const {course_id} = req.query;
+        const q = "SELECT * FROM course WHERE course_id=?";
+        conn.query(q,[course_id],(err, result) =>{
+            if(err) {
+                throw err;
+            }
+            return res.status(200).json({
+                message: "Course found",
+                data:result
+            });
+        })
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
 
 const deleteCourse = (req,res)=>{
     try{
-
+        const {course_id} = req.query;
+        const q = "DELETE FROM course WHERE course_id =?";
+        conn.query(q,[course_id],(err, result) =>{
+            if(err) {
+                throw err;
+            }
+            return res.status(200).json({
+                message: "The course has been deleted successfully"
+            });
+        })
     }catch(error){
         console.log(error);
         return res.status(500).json({
@@ -75,5 +125,7 @@ module.exports = {
     login,
     getAllCourses,
     addCourse,
+    editCourse,
+    courseById,
     deleteCourse
 }
